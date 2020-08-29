@@ -2,90 +2,75 @@ const functions = require("firebase-functions");
 const express = require("express");
 const parser = require("body-parser");
 const cors = require("cors");
-const fileMiddleware = require('express-multipart-file-parser');
 
+
+//Routers Section...
+//Auth Section...
+const userRegister = require('./routes/auth/register');
+const userLogin = require('./routes/auth/login');
+const userLogout = require('./routes/auth/logout');
+
+//POST FEED Section...
+const feedsRouter = require('./routes/post/feeds');
+const likeRouter = require('./routes/post/like');
+const commentRouter = require('./routes/post/comment');
+const getCommentsRouter = require('./routes/post/getComments');
+const saveRouter = require('./routes/post/bookmark');
+const editCommentRouter = require('./routes/post/editComment');
+const deleteCommentRouter = require('./routes/post/deleteComment');
+// const userDetailsRouter = require('./routes/userdetails');
+const doPostRouter = require('./routes/post/post');
+const deletePostRouter = require('./routes/post/delPost');
 
 //Anonymous API Routers...
 const anonymousRouter = require('./routes/publicHome');
 //const facultyDetailsRouter = require('./routes/facultyDetails');
 
 
-//Faculty API Routers...
-const facultyRegisterRouter = require('./faculty/routes/register');
-const facultyLoginRouter = require('./faculty/routes/login');
-const facultyHomeRouter = require('./faculty/routes/home');
-const facultyProfileRouter = require('./faculty/routes/profile');
-const facultyLogoutRouter = require('./faculty/routes/logout');
-const facultyUploadRouter = require('./faculty/routes/uploader');
-const facultyPostRouter = require('./faculty/routes/post');
-const facultyLikeRouter = require('./faculty/routes/like');
-const facultySaveRouter = require('./faculty/routes/bookmark');
-const facultyCommentRouter = require('./faculty/routes/comment');
-const facultyGetCommentRouter = require('./faculty/routes/getComments');
-
-
-//Student API Routers..
-const studentLoginRouter = require('./student/routes/login');
-const studentlogoutRouter = require('./student/routes/logout');
-const studentRegisterRouter = require('./student/routes/register');
-const studentHomeRouter = require('./student/routes/home') ;
-const studentProfileRouter = require('./student/routes/profile');
-const studentLikeRouter = require('./student/routes/like');
-const studentSaveRouter = require('./student/routes/bookmark');
-const studentCommentRouter = require('./student/routes/comment');
-const studentGetCommentRouter = require('./student/routes/getComments');
-
 
 //EXPRESS APPs Section...
-const faculty = express();
-const student = express();
 const anonymous = express();
+const auth = express();
+const postFeed = express();
 
-
-//Middlewares for EXPRESS-APP Section...
-faculty.use(cors({ origin: true }));
-faculty.use(parser.json());
-faculty.use(fileMiddleware);
-
-student.use(cors({ origin: true }));
-student.use(parser.json());
-
+//Middleware Section...
+//For Anonymous User
 anonymous.use(cors({ origin: true }));
 anonymous.use(parser.json());
+
+//For Authorization APIs
+auth.use(cors({ origin: true }));
+auth.use(parser.json());
+
+//For Feed APIs
+postFeed.use(cors({ origin: true }));
+postFeed.use(parser.json());
 
 
 //Anonymous Users API call section...
 anonymous.use('/home', anonymousRouter);
-//anonymous.use('/api/faculties', facultyDetailsRouter);
 
 
-//Faculties API call section..
-faculty.use('/register', facultyRegisterRouter);
-faculty.use('/login', facultyLoginRouter);
-faculty.use('/home', facultyHomeRouter);
-faculty.use('/profile', facultyProfileRouter);
-faculty.use('/logout', facultyLogoutRouter);
-faculty.use('/upload', facultyUploadRouter);
-faculty.use('/post', facultyPostRouter);
-faculty.use('/like', facultyLikeRouter);
-faculty.use('/bookmark', facultySaveRouter);
-faculty.use('/comment', facultyCommentRouter);
-faculty.use('/getComments', facultyGetCommentRouter);
+//Auth Section...
+auth.use('/register', userRegister);
+auth.use('/login', userLogin);
+auth.use('/logout', userLogout);
 
 
-//Student API call section...
-student.use('/register', studentRegisterRouter);
-student.use('/login', studentLoginRouter);
-student.use('/home', studentHomeRouter);
-student.use('/profile', studentProfileRouter);
-student.use('/logout', studentlogoutRouter);
-student.use('/like', studentLikeRouter);
-student.use('/bookmark', studentSaveRouter);
-student.use('/comment', studentCommentRouter);
-student.use('/getComments', studentGetCommentRouter);
+//Post Feeds...
+postFeed.use('/feeds', feedsRouter);
+postFeed.use('/like', likeRouter);
+postFeed.use('/comment', commentRouter);
+postFeed.use('/getComments', getCommentsRouter);
+postFeed.use('/bookmark', saveRouter);
+postFeed.use('/editComment', editCommentRouter);
+postFeed.use('/deleteComment', deleteCommentRouter);
+postFeed.use('/post', doPostRouter);
+postFeed.use('/deletePost', deletePostRouter);
 
+// postFeed.use('/userDetails', userDetailsRouter);
 
 //Cloud Functions Section...
-exports.faculty = functions.https.onRequest(faculty);
-exports.student = functions.https.onRequest(student);
 exports.anonymous = functions.https.onRequest(anonymous);
+exports.auth = functions.https.onRequest(auth);
+exports.home = functions.https.onRequest(postFeed);
