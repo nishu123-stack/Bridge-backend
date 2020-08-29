@@ -4,6 +4,8 @@ const parser = require("body-parser");
 const cors = require("cors");
 
 
+const getProfile =require('./routes/profile/getProfile');
+
 //Routers Section...
 //Auth Section...
 const userRegister = require('./routes/auth/register');
@@ -67,6 +69,7 @@ postFeed.use('/editComment', editCommentRouter);
 postFeed.use('/deleteComment', deleteCommentRouter);
 postFeed.use('/post', doPostRouter);
 postFeed.use('/deletePost', deletePostRouter);
+postFeed.use('/getProfile', getProfile);
 
 // postFeed.use('/userDetails', userDetailsRouter);
 
