@@ -13,6 +13,7 @@ profileRouter.get('/',middleware.checkToken,middleware.authorizeToken, async ( r
         // else {
         //     console.log('Document data:', doc.data());
         // }
+        
 
         return res.status(200).send(resData.data());
         
