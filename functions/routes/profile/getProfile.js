@@ -1,6 +1,8 @@
 const profileRouter = require('express').Router();
 const firebase = require('firebase');
 const db = require('../../auth/app');
+
+
 const middleware = require('../../auth/authorization');
 
 profileRouter.get('/',middleware.checkToken,middleware.authorizeToken, async ( req, res, next) =>{
